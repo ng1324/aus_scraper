@@ -580,66 +580,6 @@ def melbourne_water(url, count):
     print(f"melbourne_water complete, runtime: {elapsed_time1:.2f} seconds")
     return count
 
-def barwon_water(url, count):
-    print('Running barwon_water')
-    start_time1 = time.time()
-    driver = webdriver.Chrome()
-    driver.get(url)
-    job_data = []
-    page_content = BeautifulSoup(driver.page_source, 'html.parser')
-    job_container = page_content.find('div', class_="job-listing")
-    for job_cards in job_container.find_all('div', class_="job-listing__item"):
-        job_title_element = job_cards.find('h2')
-        job_title = job_title_element.text.strip() if job_title_element else ''
-        details_element = job_cards.find('ul').text
-        statuses_index = details_element.find("Statuses:")
-        if statuses_index != -1:
-            job_location = details_element[:statuses_index].strip()
-            work_type = details_element[statuses_index + len("Statuses:"):].strip()
-        else:
-            job_location = ''
-            work_type = ''
-        job_url_element = job_cards.a['href']
-        job_url = job_url_element if job_url_element else ''
-        print(job_url)
-        if job_url:
-            driver1 = webdriver.Chrome()
-            driver1.get(job_url)
-            driver_page = BeautifulSoup(driver1.page_source, 'html.parser')
-            if driver_page:
-                job_description_element = driver_page.find('div', class_="job-listing__description")
-                while job_description_element is None:
-                    time.sleep(1)
-                    job_description_element = driver_page.find('div', class_="job-listing__description")
-                job_description_raw = job_description_element
-                job_description = job_description_raw.text.strip()
-            else:
-                print(f"Error getting HTML for {job_url}")
-
-            job_data.append({
-                'Company' : "barwon_water",
-                'Job ID' : '',
-                'Job Title': job_title,
-                'URL': job_url,
-                'Job Location': job_location,
-                'Work Type' : work_type,
-                'Job Categories' : '',
-                'Job Summary' : '',
-                'Job Description Raw' : job_description_raw,
-                'Job Description Text' : job_description
-            })
-                 
-            print(f'Job {count} pulled for: {job_title}')
-            count += 1
-    df = pd.DataFrame(job_data)
-    excel_filename = r'C:\Users\User\Desktop\barwon_water.xlsx'
-    df.to_excel(excel_filename, index=False)
-    end_time1 = time.time()
-    elapsed_time1 = end_time1 - start_time1
-    print(f'Data saved to {excel_filename}')
-    print(f"barwon_water complete, runtime: {elapsed_time1:.2f} seconds")
-    return count
-
 def greater_western_water(url, count):
     print('Running greater_western_water')
     start_time1 = time.time()
@@ -1170,63 +1110,6 @@ def northeastwater(url, count):
     print(f"northeastwater complete, runtime: {elapsed_time1:.2f} seconds")
     return count
 
-
-def auscitycouncil(url, count):
-    print('Running auscitycouncil')
-    start_time1 = time.time()
-    driver = webdriver.Chrome()
-    job_data = []
-    driver.get(url)
-    time.sleep(3)
-    page_content = BeautifulSoup(driver.page_source, 'html.parser')
-    working_content = page_content.find('div', class_="wpjb-job-list wpjb-grid")
-    for job_cards in working_content.find_all('a'):
-        job_url = job_cards['href']
-        job_list_details = job_cards.find('div', class_="job-list__details")
-        job_title_element = job_list_details.find('div', class_='job-list__title')
-        job_title = job_title_element.text.strip() if job_title_element else ''
-        job_company_element = job_title_element.find('div', class_="job-list__council")
-        job_company = job_company_element.text.strip() if job_company_element else ''
-        job_location_element = job_list_details.find('div', class_="job-list__location")
-        job_location = job_location_element.text.strip if job_location_element else ''
-        job_type_element = job_list_details.find('div', class_="job-list__tag")
-        job_type = job_type_element.text.strip() if job_type_element else ''
-        posted_date_element = job_cards.find('div', class_="job-list__dates").text.strip().split('Closes:')[0].split(': ')[1]
-        if job_url:
-            driver1 = webdriver.Chrome()
-            driver1.get(job_url)
-            page_content = BeautifulSoup(driver1.page_source, 'html.parser')
-            working_content = page_content.find('section', class_="section-page-title")
-            job_description_element = working_content.find('div',{'itemprop':"description", 'class':"wpjb-job-text"})
-            job_description_raw = job_description_element if job_description_element else ''
-            #job_description = job_description_element.text.strip()
-    
-            job_data.append({
-                'Company' : job_company,
-                'Job ID' : '',
-                'Job Title': job_title,
-                'Posted date' : posted_date_element,
-                'URL': job_url,
-                'Job Location': job_location,
-                'Work Type' : job_type,
-                'Job Categories' : '',
-                'Job Summary' : '',
-                'Job Description Raw' : job_description_raw,
-                'Job Description Text' : '',
-                'Job Requirement' : '',
-                'Job Site' : 'Australian City Council Jobs'
-            })
-            print(f'Job {count} pulled for: {job_title}')
-            count += 1
-    df = pd.DataFrame(job_data)
-    excel_filename = r'C:\Users\User\Desktop\auscitycouncil.xlsx'
-    df.to_excel(excel_filename, index=False)
-    end_time1 = time.time()
-    elapsed_time1 = end_time1 - start_time1
-    print(f'Data saved to {excel_filename}')
-    print(f"auscitycouncil complete, runtime: {elapsed_time1:.2f} seconds")
-    return count
-
 def wioa(url, count):
     print('Running wioa')
     start_time1 = time.time()
@@ -1365,7 +1248,6 @@ def main():
     url_urban_utilities = "https://careers.pageuppeople.com/581/caw/en/listing/"
     url_water_corp = "https://watercorp.taleo.net/careersection/careersection/2/joblist.ftl"
     url_melbourne_water = "https://careers.pageuppeople.com/391/cw/en/listing/"
-    url_barwon_water = "https://www.barwonwater.vic.gov.au/about-us/careers"
     url_greater_western_water = "https://careers.gww.com.au/search/?createNewAlert=false&q=&optionsFacetsDD_customfield1="
     url_sa_water = "https://careers.sawater.com.au/caw/en/listing/"
     url_iconwater = "https://recruitment.iconwater.com.au/"
@@ -1378,7 +1260,6 @@ def main():
     url_northeastwater = "https://www.newater.com.au/vacancies"
     url_h2o = "https://h2oz.org.au/jobs/"
     url_wioa = "https://wioa.org.au/positions-vacant/"
-    url_auscitycouncil = "https://www.careersatcouncil.com.au/jobs/"
     url_vicwater = "https://vicwater.org.au/vic-water-jobs-board/"
     #count = iconwater(url_iconwater, count)
     #count = sunwater(url_sunwater,count)
@@ -1388,7 +1269,6 @@ def main():
     #count = urban_utilities(url_urban_utilities, count)
     #count = water_corp(url_water_corp, count)    
     #count = melbourne_water(url_melbourne_water, count)
-    #count = barwon_water(url_barwon_water, count)
     #count = greater_western_water(url_greater_western_water, count)
     #count = sa_water(url_sa_water, count)
     #count = taswater(url_taswater,count)
@@ -1401,7 +1281,6 @@ def main():
     #count = northeastwater(url_northeastwater, count)
     #count = h2o(url_h2o, count)
     #count = wioa(url_wioa, count)
-    #count = auscitycouncil(url_auscitycouncil, count)
     #count = vicwater(url_vicwater, count)
     
 if __name__ == "__main__":
